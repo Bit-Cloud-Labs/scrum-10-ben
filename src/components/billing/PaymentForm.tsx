@@ -1,0 +1,198 @@
+'use client';
+
+import { useState } from 'react';
+import type { Invoice } from '@/types';
+
+interface PaymentFormProps {
+  invoices: Invoice[];
+  onProcessPayment: (invoiceId: string, cardDetails: {
+    cardNumber: string;
+    expiry: string;
+    cvv: string;
+  }) => void;
+}
+
+function isValidCardNumber(num: string): boolean {
+  return /^\d{16}$/.test(num.replace(/\s/g, ''));
+}
+
+function isValidExpiry(expiry: string): boolean {
+  return /^\d{2}\/\d{2}$/.test(expiry);
+}
+
+function isValidCvv(cvv: string): boolean {
+  return /^\d{3,4}$/.test(cvv);
+}
+
+export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormProps) {
+  const unpaidInvoices = invoices.filter((inv) => inv.status !== 'paid');
+  const [selectedInvoice, setSelectedInvoice] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function formatCardNumber(value: string): string {
+    return value
+      .replace(/\D/g, '')
+      .slice(0, 16)
+      .replace(/(.{4})/g, '$1 ')
+      .trim();
+  }
+
+  function formatExpiry(value: string): string {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    return digits;
+  }
+
+  function validate(): boolean {
+    const newErrors: Record<string, string> = {};
+    if (!selectedInvoice) newErrors.invoice = 'Please select an invoice';
+    if (!isValidCardNumber(cardNumber)) newErrors.cardNumber = 'Invalid card number (16 digits required)';
+    if (!isValidExpiry(expiry)) newErrors.expiry = 'Invalid expiry (MM/YY format)';
+    if (!isValidCvv(cvv)) newErrors.cvv = 'Invalid CVV (3-4 digits)';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validate()) return;
+    setIsSubmitting(true);
+    try {
+      onProcessPayment(selectedInvoice, {
+        cardNumber: cardNumber.replace(/\s/g, ''),
+        expiry,
+        cvv,
+      });
+      setSelectedInvoice('');
+      setCardNumber('');
+      setExpiry('');
+      setCvv('');
+      setErrors({});
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (unpaidInvoices.length === 0) {
+    return (
+      <div
+        className="rounded-2xl border-2 border-dashed border-[var(--color-green)] p-8 text-center"
+        data-testid="no-unpaid-invoices"
+      >
+        <p className="text-[var(--color-green)] font-semibold">All invoices are paid!</p>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl border border-[var(--color-border)] bg-white p-6 space-y-4"
+      data-testid="payment-form"
+    >
+      <h2 className="text-xl font-bold">Make a Payment</h2>
+
+      <div>
+        <label htmlFor="invoice-select" className="block text-sm font-medium mb-1">
+          Invoice *
+        </label>
+        <select
+          id="invoice-select"
+          value={selectedInvoice}
+          onChange={(e) => setSelectedInvoice(e.target.value)}
+          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+          data-testid="invoice-select"
+        >
+          <option value="">Select invoice…</option>
+          {unpaidInvoices.map((inv) => (
+            <option key={inv.id} value={inv.id}>
+              {inv.description} — ${inv.amount.toFixed(2)}
+            </option>
+          ))}
+        </select>
+        {errors.invoice && (
+          <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-invoice">
+            {errors.invoice}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="card-number" className="block text-sm font-medium mb-1">
+          Card Number *
+        </label>
+        <input
+          id="card-number"
+          type="text"
+          value={cardNumber}
+          onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+          placeholder="1234 5678 9012 3456"
+          inputMode="numeric"
+          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+          data-testid="card-number-input"
+        />
+        {errors.cardNumber && (
+          <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-card">
+            {errors.cardNumber}
+          </p>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="card-expiry" className="block text-sm font-medium mb-1">
+            Expiry (MM/YY) *
+          </label>
+          <input
+            id="card-expiry"
+            type="text"
+            value={expiry}
+            onChange={(e) => setExpiry(formatExpiry(e.target.value))}
+            placeholder="12/27"
+            inputMode="numeric"
+            className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+            data-testid="expiry-input"
+          />
+          {errors.expiry && (
+            <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-expiry">
+              {errors.expiry}
+            </p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="card-cvv" className="block text-sm font-medium mb-1">
+            CVV *
+          </label>
+          <input
+            id="card-cvv"
+            type="text"
+            value={cvv}
+            onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+            placeholder="123"
+            inputMode="numeric"
+            className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+            data-testid="cvv-input"
+          />
+          {errors.cvv && (
+            <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-cvv">
+              {errors.cvv}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full rounded-lg bg-[var(--color-green)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+        data-testid="pay-submit"
+      >
+        {isSubmitting ? 'Processing…' : 'Pay Now'}
+      </button>
+    </form>
+  );
+}
