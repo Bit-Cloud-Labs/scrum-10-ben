@@ -1,9 +1,6 @@
-import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
 import tseslint from 'typescript-eslint';
-
-const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
 export default tseslint.config(
   js.configs.recommended,
