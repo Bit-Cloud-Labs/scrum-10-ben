@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
+const inputClass =
+  'w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-violet)] focus:shadow-[0_0_0_1px_var(--color-violet),0_0_12px_var(--color-violet-glow)] transition-all duration-200';
+
 export default function SignupForm() {
   const { signup } = useAuth();
   const router = useRouter();
@@ -34,7 +37,7 @@ export default function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
       <div>
-        <label htmlFor="signup-name" className="block text-sm font-medium mb-1">
+        <label htmlFor="signup-name" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Full Name
         </label>
         <input
@@ -42,13 +45,13 @@ export default function SignupForm() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+          className={inputClass}
           placeholder="Jane Doe"
           autoComplete="name"
         />
       </div>
       <div>
-        <label htmlFor="signup-email" className="block text-sm font-medium mb-1">
+        <label htmlFor="signup-email" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Email
         </label>
         <input
@@ -56,13 +59,13 @@ export default function SignupForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+          className={inputClass}
           placeholder="you@example.com"
           autoComplete="email"
         />
       </div>
       <div>
-        <label htmlFor="signup-password" className="block text-sm font-medium mb-1">
+        <label htmlFor="signup-password" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Password
         </label>
         <input
@@ -70,22 +73,26 @@ export default function SignupForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+          className={inputClass}
           placeholder="Min. 8 characters"
           autoComplete="new-password"
         />
       </div>
       {error && (
-        <p className="text-sm text-[var(--color-red)]" role="alert" data-testid="signup-error">
+        <p
+          className="rounded-lg border border-[var(--color-red)] bg-[var(--color-red-dim)] px-3 py-2 text-xs text-[var(--color-red)]"
+          role="alert"
+          data-testid="signup-error"
+        >
           {error}
         </p>
       )}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-[var(--color-green)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+        className="w-full rounded-lg bg-[var(--color-violet)] px-4 py-2.5 text-sm font-semibold text-white hover:shadow-[0_0_20px_var(--color-violet-glow)] disabled:opacity-40 transition-all duration-200"
       >
-        {isSubmitting ? 'Creating account…' : 'Create account'}
+        {isSubmitting ? 'Creating account…' : 'Create Account'}
       </button>
     </form>
   );

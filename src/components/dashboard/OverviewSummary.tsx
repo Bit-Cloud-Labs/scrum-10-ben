@@ -27,46 +27,93 @@ export default function OverviewSummary() {
 
   const completedCount = plan?.milestones.filter((m) => m.completed).length ?? 0;
   const totalCount = plan?.milestones.length ?? 0;
+  const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <section className="rounded-2xl bg-[var(--color-blue-light)] p-6" data-testid="overview-summary">
-      <h2 className="text-xl font-bold mb-4 text-[var(--color-blue)]">Your Overview</h2>
+    <section data-testid="overview-summary">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="h-px flex-1 bg-[var(--color-border)]" />
+        <span className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest">
+          Overview
+        </span>
+        <span className="h-px flex-1 bg-[var(--color-border)]" />
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-xl bg-white p-4 shadow-sm" data-testid="plan-summary">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+        {/* Wellness Plan card */}
+        <div
+          className="glass rounded-2xl p-5 relative overflow-hidden group hover:border-[var(--color-primary)] transition-all duration-300"
+          data-testid="plan-summary"
+        >
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at 50% 0%, rgba(0,217,255,0.06) 0%, transparent 70%)' }}
+          />
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-3">
             Wellness Plan
           </p>
-          <p className="mt-1 text-2xl font-bold">
-            {completedCount}/{totalCount}
+          <p
+            className="text-4xl font-bold tabular-nums neon-text-cyan"
+            style={{ fontFamily: 'var(--font-space-grotesk)' }}
+          >
+            {completedCount}
+            <span className="text-xl text-[var(--color-muted)] font-normal">/{totalCount}</span>
           </p>
-          <p className="text-sm text-[var(--color-muted)]">milestones complete</p>
+          <p className="text-xs text-[var(--color-muted)] mt-1">milestones complete</p>
+          {totalCount > 0 && (
+            <div className="mt-3 h-1 w-full rounded-full bg-[var(--color-surface-2)] overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--color-primary)] transition-all duration-700"
+                style={{ width: `${pct}%`, boxShadow: '0 0 6px var(--color-primary-glow)' }}
+              />
+            </div>
+          )}
         </div>
-        <div className="rounded-xl bg-white p-4 shadow-sm" data-testid="progress-summary">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+
+        {/* Latest Progress card */}
+        <div
+          className="glass rounded-2xl p-5 relative overflow-hidden group hover:border-[var(--color-violet)] transition-all duration-300"
+          data-testid="progress-summary"
+        >
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at 50% 0%, rgba(168,85,247,0.06) 0%, transparent 70%)' }}
+          />
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-3">
             Latest Progress
           </p>
           {recentEntry ? (
             <>
-              <p className="mt-1 text-lg font-bold capitalize">{recentEntry.category.replace('_', ' ')}</p>
-              <p className="text-sm text-[var(--color-muted)]">{recentEntry.note}</p>
+              <p className="text-lg font-bold capitalize" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+                {recentEntry.category.replace('_', ' ')}
+              </p>
+              <p className="text-xs text-[var(--color-muted)] mt-1 line-clamp-2">{recentEntry.note}</p>
             </>
           ) : (
-            <p className="mt-1 text-sm text-[var(--color-muted)]">No entries yet</p>
+            <p className="text-sm text-[var(--color-muted)] mt-1">No entries yet</p>
           )}
         </div>
-        <div className="rounded-xl bg-white p-4 shadow-sm" data-testid="appointment-summary">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+
+        {/* Next Appointment card */}
+        <div
+          className="glass rounded-2xl p-5 relative overflow-hidden group hover:border-[var(--color-green)] transition-all duration-300"
+          data-testid="appointment-summary"
+        >
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at 50% 0%, rgba(16,185,129,0.06) 0%, transparent 70%)' }}
+          />
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-3">
             Next Appointment
           </p>
           {nextAppt ? (
             <>
-              <p className="mt-1 text-lg font-bold">{nextAppt.service}</p>
-              <p className="text-sm text-[var(--color-muted)]">
-                {nextAppt.date} at {nextAppt.time}
+              <p className="text-lg font-bold" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+                {nextAppt.service}
+              </p>
+              <p className="text-xs text-[var(--color-muted)] mt-1">
+                {nextAppt.date} · {nextAppt.time}
               </p>
             </>
           ) : (
-            <p className="mt-1 text-sm text-[var(--color-muted)]">No upcoming appointments</p>
+            <p className="text-sm text-[var(--color-muted)] mt-1">No upcoming appointments</p>
           )}
         </div>
       </div>

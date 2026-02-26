@@ -9,16 +9,19 @@ interface ProgressLogProps {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'fitness', label: 'Fitness' },
-  { value: 'nutrition', label: 'Nutrition' },
-  { value: 'mental_health', label: 'Mental Health' },
+  { value: 'fitness',       label: 'Fitness',      color: 'var(--color-primary)', glow: 'var(--color-primary-glow)' },
+  { value: 'nutrition',     label: 'Nutrition',    color: 'var(--color-green)',   glow: 'var(--color-green-glow)' },
+  { value: 'mental_health', label: 'Mental Health', color: 'var(--color-violet)', glow: 'var(--color-violet-glow)' },
 ] as const;
 
-const CATEGORY_COLORS: Record<string, string> = {
-  fitness: 'var(--color-blue)',
-  nutrition: 'var(--color-green)',
-  mental_health: 'var(--color-red)',
+const CATEGORY_META: Record<string, { color: string; glow: string }> = {
+  fitness:      { color: 'var(--color-primary)', glow: 'var(--color-primary-glow)' },
+  nutrition:    { color: 'var(--color-green)',   glow: 'var(--color-green-glow)' },
+  mental_health:{ color: 'var(--color-violet)',  glow: 'var(--color-violet-glow)' },
 };
+
+const inputClass =
+  'w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:shadow-[0_0_0_1px_var(--color-primary),0_0_10px_var(--color-primary-glow)] transition-all duration-200';
 
 export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
   const [isAdding, setIsAdding] = useState(false);
@@ -50,10 +53,19 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
   return (
     <section data-testid="progress-log">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">Progress Log</h2>
+        <h2
+          className="text-xl font-bold"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Progress Log
+        </h2>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="rounded-lg bg-[var(--color-blue)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          className={`rounded-lg px-4 py-2 text-xs font-semibold tracking-wide uppercase transition-all duration-200 ${
+            isAdding
+              ? 'border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-red)] hover:text-[var(--color-red)]'
+              : 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:shadow-[0_0_16px_var(--color-primary-glow)]'
+          }`}
           data-testid="add-entry-toggle"
         >
           {isAdding ? 'Cancel' : '+ Log Entry'}
@@ -63,19 +75,19 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
       {isAdding && (
         <form
           onSubmit={handleSubmit}
-          className="mb-4 rounded-2xl border border-[var(--color-blue)] bg-[var(--color-blue-light)] p-4 space-y-3"
+          className="mb-4 glass rounded-2xl border-[var(--color-border-bright)] p-5 space-y-4"
           data-testid="add-entry-form"
         >
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="entry-category" className="block text-sm font-medium mb-1">
+              <label htmlFor="entry-category" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
                 Category
               </label>
               <select
                 id="entry-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value as ProgressEntry['category'])}
-                className="w-full rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+                className={inputClass}
               >
                 {CATEGORY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -85,7 +97,7 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
               </select>
             </div>
             <div>
-              <label htmlFor="entry-value" className="block text-sm font-medium mb-1">
+              <label htmlFor="entry-value" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
                 Value (e.g. minutes)
               </label>
               <input
@@ -95,13 +107,13 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
                 step="0.1"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+                className={inputClass}
                 placeholder="30"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="entry-note" className="block text-sm font-medium mb-1">
+            <label htmlFor="entry-note" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
               Note *
             </label>
             <input
@@ -109,12 +121,12 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+              className={inputClass}
               placeholder="What did you do?"
             />
           </div>
           <div>
-            <label htmlFor="entry-date" className="block text-sm font-medium mb-1">
+            <label htmlFor="entry-date" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
               Date
             </label>
             <input
@@ -122,17 +134,17 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+              className={inputClass}
             />
           </div>
           {error && (
-            <p className="text-sm text-[var(--color-red)]" role="alert" data-testid="entry-error">
+            <p className="rounded-lg border border-[var(--color-red)] bg-[var(--color-red-dim)] px-3 py-2 text-xs text-[var(--color-red)]" role="alert" data-testid="entry-error">
               {error}
             </p>
           )}
           <button
             type="submit"
-            className="w-full rounded-lg bg-[var(--color-blue)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+            className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary-foreground)] hover:shadow-[0_0_16px_var(--color-primary-glow)] transition-all duration-200"
             data-testid="submit-entry"
           >
             Save Entry
@@ -142,31 +154,34 @@ export default function ProgressLog({ entries, onAddEntry }: ProgressLogProps) {
 
       {entries.length === 0 ? (
         <div
-          className="rounded-2xl border-2 border-dashed border-[var(--color-border)] p-8 text-center"
+          className="glass rounded-2xl p-10 text-center border-dashed"
           data-testid="log-empty-state"
         >
-          <p className="text-[var(--color-muted)]">No progress entries yet. Start logging!</p>
+          <p className="text-sm text-[var(--color-muted)]">No progress entries yet. Start logging!</p>
         </div>
       ) : (
         <ul className="space-y-2" data-testid="entry-list">
-          {entries.map((entry) => (
-            <li
-              key={entry.id}
-              className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] p-3"
-              data-testid={`entry-${entry.id}`}
-            >
-              <span
-                className="h-3 w-3 shrink-0 rounded-full"
-                style={{ backgroundColor: CATEGORY_COLORS[entry.category] }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{entry.note}</p>
-                <p className="text-xs text-[var(--color-muted)] capitalize">
-                  {entry.category.replace('_', ' ')} · {entry.value} · {entry.date}
-                </p>
-              </div>
-            </li>
-          ))}
+          {entries.map((entry) => {
+            const meta = CATEGORY_META[entry.category] ?? CATEGORY_META.fitness;
+            return (
+              <li
+                key={entry.id}
+                className="glass flex items-center gap-3 rounded-xl p-3 hover:border-[var(--color-border-bright)] transition-all duration-200"
+                data-testid={`entry-${entry.id}`}
+              >
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: meta.color, boxShadow: `0 0 6px ${meta.glow}` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[var(--color-foreground)]">{entry.note}</p>
+                  <p className="text-xs text-[var(--color-muted)] capitalize" style={{ fontFamily: 'var(--font-mono)' }}>
+                    {entry.category.replace('_', ' ')} · {entry.value} · {entry.date}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

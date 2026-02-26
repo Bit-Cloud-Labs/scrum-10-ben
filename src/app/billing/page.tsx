@@ -32,8 +32,16 @@ function BillingContent() {
   if (!billingInfo) return null;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
-      <h1 className="text-2xl font-bold">Billing &amp; Payments</h1>
+    <div className="mx-auto max-w-3xl px-4 py-8 space-y-6 animate-fade-up">
+      <div>
+        <p className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest mb-1">Module</p>
+        <h1
+          className="text-3xl font-bold tracking-tight gradient-text"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Billing &amp; Payments
+        </h1>
+      </div>
       <BillingSummary billingInfo={billingInfo} />
       <InvoiceList invoices={billingInfo.invoices} />
       <PaymentForm

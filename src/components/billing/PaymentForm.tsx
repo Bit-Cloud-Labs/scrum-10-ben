@@ -24,6 +24,9 @@ function isValidCvv(cvv: string): boolean {
   return /^\d{3,4}$/.test(cvv);
 }
 
+const inputClass =
+  'w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-green)] focus:shadow-[0_0_0_1px_var(--color-green),0_0_10px_var(--color-green-glow)] transition-all duration-200';
+
 export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormProps) {
   const unpaidInvoices = invoices.filter((inv) => inv.status !== 'paid');
   const [selectedInvoice, setSelectedInvoice] = useState('');
@@ -34,11 +37,7 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function formatCardNumber(value: string): string {
-    return value
-      .replace(/\D/g, '')
-      .slice(0, 16)
-      .replace(/(.{4})/g, '$1 ')
-      .trim();
+    return value.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
   }
 
   function formatExpiry(value: string): string {
@@ -80,10 +79,11 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
   if (unpaidInvoices.length === 0) {
     return (
       <div
-        className="rounded-2xl border-2 border-dashed border-[var(--color-green)] p-8 text-center"
+        className="glass rounded-2xl p-8 text-center border-[var(--color-green)]"
+        style={{ boxShadow: '0 0 20px var(--color-green-glow)' }}
         data-testid="no-unpaid-invoices"
       >
-        <p className="text-[var(--color-green)] font-semibold">All invoices are paid!</p>
+        <p className="text-[var(--color-green)] font-semibold neon-text-green">All invoices are paid</p>
       </div>
     );
   }
@@ -91,20 +91,28 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-[var(--color-border)] bg-white p-6 space-y-4"
+      className="glass rounded-2xl border-[var(--color-border-bright)] p-6 space-y-4"
       data-testid="payment-form"
     >
-      <h2 className="text-xl font-bold">Make a Payment</h2>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-[var(--color-green)] text-lg">◆</span>
+        <h2
+          className="text-lg font-bold text-[var(--color-foreground)]"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Make a Payment
+        </h2>
+      </div>
 
       <div>
-        <label htmlFor="invoice-select" className="block text-sm font-medium mb-1">
+        <label htmlFor="invoice-select" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Invoice *
         </label>
         <select
           id="invoice-select"
           value={selectedInvoice}
           onChange={(e) => setSelectedInvoice(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+          className={inputClass}
           data-testid="invoice-select"
         >
           <option value="">Select invoice…</option>
@@ -115,14 +123,12 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
           ))}
         </select>
         {errors.invoice && (
-          <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-invoice">
-            {errors.invoice}
-          </p>
+          <p className="text-xs text-[var(--color-red)] mt-1.5" role="alert" data-testid="error-invoice">{errors.invoice}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="card-number" className="block text-sm font-medium mb-1">
+        <label htmlFor="card-number" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Card Number *
         </label>
         <input
@@ -132,19 +138,17 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
           placeholder="1234 5678 9012 3456"
           inputMode="numeric"
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+          className={inputClass}
           data-testid="card-number-input"
         />
         {errors.cardNumber && (
-          <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-card">
-            {errors.cardNumber}
-          </p>
+          <p className="text-xs text-[var(--color-red)] mt-1.5" role="alert" data-testid="error-card">{errors.cardNumber}</p>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="card-expiry" className="block text-sm font-medium mb-1">
+          <label htmlFor="card-expiry" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
             Expiry (MM/YY) *
           </label>
           <input
@@ -154,17 +158,15 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
             onChange={(e) => setExpiry(formatExpiry(e.target.value))}
             placeholder="12/27"
             inputMode="numeric"
-            className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+            className={inputClass}
             data-testid="expiry-input"
           />
           {errors.expiry && (
-            <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-expiry">
-              {errors.expiry}
-            </p>
+            <p className="text-xs text-[var(--color-red)] mt-1.5" role="alert" data-testid="error-expiry">{errors.expiry}</p>
           )}
         </div>
         <div>
-          <label htmlFor="card-cvv" className="block text-sm font-medium mb-1">
+          <label htmlFor="card-cvv" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
             CVV *
           </label>
           <input
@@ -174,13 +176,11 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
             onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
             placeholder="123"
             inputMode="numeric"
-            className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-green)]"
+            className={inputClass}
             data-testid="cvv-input"
           />
           {errors.cvv && (
-            <p className="text-xs text-[var(--color-red)] mt-1" role="alert" data-testid="error-cvv">
-              {errors.cvv}
-            </p>
+            <p className="text-xs text-[var(--color-red)] mt-1.5" role="alert" data-testid="error-cvv">{errors.cvv}</p>
           )}
         </div>
       </div>
@@ -188,7 +188,7 @@ export default function PaymentForm({ invoices, onProcessPayment }: PaymentFormP
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-[var(--color-green)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+        className="w-full rounded-lg bg-[var(--color-green)] px-4 py-2.5 text-sm font-semibold text-white hover:shadow-[0_0_20px_var(--color-green-glow)] disabled:opacity-40 transition-all duration-200"
         data-testid="pay-submit"
       >
         {isSubmitting ? 'Processing…' : 'Pay Now'}

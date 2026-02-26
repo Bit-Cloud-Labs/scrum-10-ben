@@ -6,63 +6,94 @@ const LINKS = [
   {
     href: '/wellness-plan',
     label: 'Wellness Plan',
-    icon: '🌿',
-    description: 'View and manage your plan',
-    color: 'var(--color-green)',
-    bg: 'var(--color-green-light)',
+    description: 'View & manage milestones',
+    icon: '◈',
+    accent: 'var(--color-green)',
+    glow: 'var(--color-green-glow)',
+    dim: 'var(--color-green-dim)',
   },
   {
     href: '/progress',
     label: 'Progress',
-    icon: '📈',
-    description: 'Track your wellness journey',
-    color: 'var(--color-blue)',
-    bg: 'var(--color-blue-light)',
+    description: 'Track your journey',
+    icon: '▲',
+    accent: 'var(--color-primary)',
+    glow: 'var(--color-primary-glow)',
+    dim: 'var(--color-primary-dim)',
   },
   {
     href: '/appointments',
     label: 'Appointments',
-    icon: '📅',
-    description: 'Book and manage sessions',
-    color: 'var(--color-red)',
-    bg: 'var(--color-red-light)',
+    description: 'Book & manage sessions',
+    icon: '◷',
+    accent: 'var(--color-violet)',
+    glow: 'var(--color-violet-glow)',
+    dim: 'var(--color-violet-dim)',
   },
   {
     href: '/messages',
     label: 'Messages',
-    icon: '💬',
     description: 'Chat with your coach',
-    color: 'var(--color-blue)',
-    bg: 'var(--color-blue-light)',
+    icon: '◎',
+    accent: 'var(--color-primary)',
+    glow: 'var(--color-primary-glow)',
+    dim: 'var(--color-primary-dim)',
   },
   {
     href: '/billing',
     label: 'Billing',
-    icon: '💳',
-    description: 'View invoices and payments',
-    color: 'var(--color-green)',
-    bg: 'var(--color-green-light)',
+    description: 'Invoices & payments',
+    icon: '◆',
+    accent: 'var(--color-amber)',
+    glow: 'var(--color-amber-dim)',
+    dim: 'var(--color-amber-dim)',
   },
 ];
 
 export default function QuickLinks() {
   return (
     <section data-testid="quick-links">
-      <h2 className="text-xl font-bold mb-4">Quick Links</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="h-px flex-1 bg-[var(--color-border)]" />
+        <span className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest">
+          Quick Access
+        </span>
+        <span className="h-px flex-1 bg-[var(--color-border)]" />
+      </div>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {LINKS.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className="group flex flex-col items-center rounded-2xl p-4 text-center transition-transform hover:scale-105"
-            style={{ backgroundColor: link.bg }}
+            className="group glass rounded-2xl p-4 text-center transition-all duration-300 hover:scale-[1.03]"
+            style={{
+              '--link-accent': link.accent,
+              '--link-glow': link.glow,
+              '--link-dim': link.dim,
+            } as React.CSSProperties}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = link.accent;
+              (e.currentTarget as HTMLElement).style.boxShadow = `0 0 16px ${link.glow}`;
+              (e.currentTarget as HTMLElement).style.background = link.dim;
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = '';
+              (e.currentTarget as HTMLElement).style.boxShadow = '';
+              (e.currentTarget as HTMLElement).style.background = '';
+            }}
             data-testid={`quick-link-${link.href.slice(1)}`}
           >
-            <span className="text-3xl mb-2">{link.icon}</span>
-            <span className="text-sm font-semibold" style={{ color: link.color }}>
+            <span
+              className="block text-2xl mb-2 transition-transform duration-200 group-hover:scale-110"
+              style={{ color: link.accent, textShadow: `0 0 10px ${link.glow}` }}
+            >
+              {link.icon}
+            </span>
+            <span className="block text-xs font-semibold" style={{ color: link.accent }}>
               {link.label}
             </span>
-            <span className="text-xs text-[var(--color-muted)] mt-1 hidden sm:block">
+            <span className="block text-[10px] text-[var(--color-muted)] mt-0.5 hidden sm:block">
               {link.description}
             </span>
           </Link>

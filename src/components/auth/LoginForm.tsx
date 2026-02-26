@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
+const inputClass =
+  'w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:shadow-[0_0_0_1px_var(--color-primary),0_0_12px_var(--color-primary-glow)] transition-all duration-200';
+
 export default function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
@@ -33,7 +36,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
       <div>
-        <label htmlFor="login-email" className="block text-sm font-medium mb-1">
+        <label htmlFor="login-email" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Email
         </label>
         <input
@@ -41,13 +44,13 @@ export default function LoginForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+          className={inputClass}
           placeholder="you@example.com"
           autoComplete="email"
         />
       </div>
       <div>
-        <label htmlFor="login-password" className="block text-sm font-medium mb-1">
+        <label htmlFor="login-password" className="block text-xs font-medium text-[var(--color-muted-2)] mb-1.5 uppercase tracking-wider">
           Password
         </label>
         <input
@@ -55,22 +58,26 @@ export default function LoginForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-blue)]"
+          className={inputClass}
           placeholder="••••••••"
           autoComplete="current-password"
         />
       </div>
       {error && (
-        <p className="text-sm text-[var(--color-red)]" role="alert" data-testid="login-error">
+        <p
+          className="rounded-lg border border-[var(--color-red)] bg-[var(--color-red-dim)] px-3 py-2 text-xs text-[var(--color-red)]"
+          role="alert"
+          data-testid="login-error"
+        >
           {error}
         </p>
       )}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-[var(--color-blue)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+        className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary-foreground)] hover:shadow-[0_0_20px_var(--color-primary-glow)] disabled:opacity-40 transition-all duration-200"
       >
-        {isSubmitting ? 'Signing in…' : 'Sign in'}
+        {isSubmitting ? 'Authenticating…' : 'Sign In'}
       </button>
     </form>
   );

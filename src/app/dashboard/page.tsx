@@ -9,13 +9,19 @@ import { useAuth } from '@/context/AuthContext';
 function DashboardContent() {
   const { user } = useAuth();
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 space-y-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 space-y-8 animate-fade-up">
       <div>
-        <h1 className="text-2xl font-bold">
-          Welcome back, {user?.name ?? 'Client'}!
+        <p className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest mb-1">
+          Welcome back
+        </p>
+        <h1
+          className="text-3xl font-bold tracking-tight"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          <span className="gradient-text">{user?.name ?? 'Client'}</span>
         </h1>
-        <p className="text-[var(--color-muted)] mt-1">
-          Here&apos;s a snapshot of your wellness journey.
+        <p className="text-sm text-[var(--color-muted)] mt-1">
+          Here&apos;s a real-time snapshot of your wellness journey.
         </p>
       </div>
       <OverviewSummary />

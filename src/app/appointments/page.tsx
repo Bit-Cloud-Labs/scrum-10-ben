@@ -32,8 +32,16 @@ function AppointmentsContent() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
-      <h1 className="text-2xl font-bold">Appointments</h1>
+    <div className="mx-auto max-w-3xl px-4 py-8 space-y-6 animate-fade-up">
+      <div>
+        <p className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest mb-1">Module</p>
+        <h1
+          className="text-3xl font-bold tracking-tight gradient-text"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Appointments
+        </h1>
+      </div>
       <BookingForm onBook={handleBook} />
       <AppointmentList appointments={appointments} onCancel={handleCancel} />
     </div>

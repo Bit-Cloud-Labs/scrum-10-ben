@@ -37,9 +37,17 @@ function MessagesContent() {
   const selectedConversation = conversations.find((c) => c.id === selectedId) ?? null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Messages</h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div className="mx-auto max-w-5xl px-4 py-8 animate-fade-up">
+      <div className="mb-6">
+        <p className="text-xs font-medium text-[var(--color-muted)] uppercase tracking-widest mb-1">Module</p>
+        <h1
+          className="text-3xl font-bold tracking-tight gradient-text"
+          style={{ fontFamily: 'var(--font-space-grotesk)' }}
+        >
+          Messages
+        </h1>
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3" style={{ minHeight: '520px' }}>
         <div className="md:col-span-1">
           <ConversationList
             conversations={conversations}
@@ -47,7 +55,7 @@ function MessagesContent() {
             onSelect={handleSelectConversation}
           />
         </div>
-        <div className="md:col-span-2 rounded-2xl border border-[var(--color-border)] overflow-hidden">
+        <div className="md:col-span-2 glass rounded-2xl overflow-hidden flex flex-col">
           <MessageThread
             conversation={selectedConversation}
             currentUserId={user?.id ?? ''}
